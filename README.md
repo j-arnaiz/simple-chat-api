@@ -1,5 +1,7 @@
 # Simple Chat API
 
+[![CI](https://github.com/j-arnaiz/simple-chat-api/workflows/CI/badge.svg)](https://github.com/j-arnaiz/simple-chat-api/actions)
+
 Real-time chat API built with Django, GraphQL, and WebSockets.
 
 ## Description
