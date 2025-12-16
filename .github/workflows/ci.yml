@@ -1,0 +1,140 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  code-quality:
+    name: Code Quality
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install uv
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+    - name: Install dependencies
+      run: |
+        uv pip install --system -r requirements.txt
+
+    - name: Run Black (format check)
+      run: |
+        black --check .
+
+    - name: Run Ruff (linting)
+      run: |
+        ruff check .
+
+  tests:
+    name: Tests
+    needs: code-quality
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: simple_chat_api_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Install uv
+      run: |
+        curl -LsSf https://astral.sh/uv/install.sh | sh
+        echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+    - name: Install dependencies
+      run: |
+        uv pip install --system -r requirements.txt
+
+    - name: Run migrations
+      env:
+        SECRET_KEY: test-secret-key-for-ci
+        DEBUG: True
+        DB_ENGINE: postgresql
+        DB_NAME: simple_chat_api_test
+        DB_USER: postgres
+        DB_PASSWORD: postgres
+        DB_HOST: localhost
+        DB_PORT: 5432
+        REDIS_HOST: localhost
+        REDIS_PORT: 6379
+      run: |
+        python manage.py migrate --noinput
+
+    - name: Run tests
+      env:
+        SECRET_KEY: test-secret-key-for-ci
+        DEBUG: True
+        DB_ENGINE: postgresql
+        DB_NAME: simple_chat_api_test
+        DB_USER: postgres
+        DB_PASSWORD: postgres
+        DB_HOST: localhost
+        DB_PORT: 5432
+        REDIS_HOST: localhost
+        REDIS_PORT: 6379
+      run: |
+        python manage.py test
+
+    - name: Run tests with coverage
+      env:
+        SECRET_KEY: test-secret-key-for-ci
+        DEBUG: True
+        DB_ENGINE: postgresql
+        DB_NAME: simple_chat_api_test
+        DB_USER: postgres
+        DB_PASSWORD: postgres
+        DB_HOST: localhost
+        DB_PORT: 5432
+        REDIS_HOST: localhost
+        REDIS_PORT: 6379
+      run: |
+        coverage run --source='.' manage.py test
+        coverage report
+        coverage xml
+
+    - name: Upload coverage reports
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: false
+      continue-on-error: true
