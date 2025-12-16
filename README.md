@@ -1,6 +1,9 @@
 # Simple Chat API
 
 [![CI](https://github.com/j-arnaiz/simple-chat-api/workflows/CI/badge.svg)](https://github.com/j-arnaiz/simple-chat-api/actions)
+[![Tests](https://img.shields.io/github/actions/workflow/status/j-arnaiz/simple-chat-api/ci.yml?label=tests&logo=github)](https://github.com/j-arnaiz/simple-chat-api/actions)
+[![Code Quality](https://img.shields.io/github/actions/workflow/status/j-arnaiz/simple-chat-api/ci.yml?label=code%20quality&logo=github)](https://github.com/j-arnaiz/simple-chat-api/actions)
+[![codecov](https://codecov.io/gh/j-arnaiz/simple-chat-api/branch/main/graph/badge.svg)](https://codecov.io/gh/j-arnaiz/simple-chat-api)
 
 Real-time chat API built with Django, GraphQL, and WebSockets.
 
