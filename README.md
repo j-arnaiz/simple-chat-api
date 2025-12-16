@@ -62,7 +62,7 @@ docker-compose up --build
 
 4. Create superuser (in another terminal):
 ```bash
-docker-compose exec web python manage.py createsuperuser
+docker-compose exec api python manage.py createsuperuser
 ```
 
 The application will be available at `http://localhost:8000`
@@ -78,16 +78,16 @@ The application will be available at `http://localhost:8000`
 docker-compose down
 
 # View logs
-docker-compose logs -f web
+docker-compose logs -f api
 
 # Run migrations
-docker-compose exec web python manage.py migrate
+docker-compose exec api python manage.py migrate
 
 # Run tests
-docker-compose exec web python manage.py test
+docker-compose exec api python manage.py test
 
 # Access Django shell
-docker-compose exec web python manage.py shell
+docker-compose exec api python manage.py shell
 ```
 
 ### Option 2: Local Development

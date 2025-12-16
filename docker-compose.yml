@@ -31,9 +31,9 @@ services:
       timeout: 5s
       retries: 5
 
-  web:
+  api:
     build: .
-    container_name: simple_chat_web
+    container_name: simple_chat_api
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - .:/app
