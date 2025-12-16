@@ -6,7 +6,6 @@ Tests the OAuth2 token flow and protected endpoint access.
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
-from django.urls import reverse
 from oauth2_provider.models import Application
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -130,7 +129,7 @@ class OAuth2TokenTest(TestCase):
 
     def test_obtain_token_for_inactive_user(self):
         """Test that inactive users cannot obtain tokens."""
-        inactive_user = User.objects.create_user(
+        User.objects.create_user(
             username="inactive",
             email="inactive@example.com",
             password="pass123",
@@ -274,17 +273,18 @@ class OAuth2ProtectedEndpointTest(TestCase):
         """Test that invalid token format is rejected."""
         self.client.credentials(HTTP_AUTHORIZATION="Bearer invalid_token_format")
 
-        response = self.client.get("/admin/")
+        # Try to access admin - should not crash with invalid token
+        self.client.get("/admin/")
 
-        # Should still not be authenticated, but response depends on endpoint
-        # This mainly tests that invalid tokens don't crash the system
-        self.assertTrue(True)  # If we get here, no crash occurred
+        # If we get here, no crash occurred
+        self.assertTrue(True)
 
     def test_missing_bearer_prefix(self):
         """Test that token without Bearer prefix is handled."""
         self.client.credentials(HTTP_AUTHORIZATION=self.access_token)
 
-        response = self.client.get("/admin/")
+        # Try to access admin - should not crash without Bearer prefix
+        self.client.get("/admin/")
 
-        # Should not be authenticated without proper Bearer prefix
-        self.assertTrue(True)  # If we get here, no crash occurred
+        # If we get here, no crash occurred
+        self.assertTrue(True)
