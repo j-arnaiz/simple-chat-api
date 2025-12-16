@@ -29,12 +29,68 @@ This API provides a multi-user chat system with OAuth2 authentication, role-base
 
 ## Prerequisites
 
+**For Docker:**
+- Docker
+- Docker Compose
+
+**For Local Development:**
 - Python 3.8+
 - PostgreSQL
-- uv (recommended) or pip
 - Redis (for Django Channels)
+- uv (recommended) or pip
 
 ## Installation
+
+### Option 1: Docker (Recommended)
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd simple-chat-api
+```
+
+2. Create environment file:
+```bash
+cp .env.example .env
+# Edit .env if needed (defaults work for Docker)
+```
+
+3. Build and start services:
+```bash
+docker-compose up --build
+```
+
+4. Create superuser (in another terminal):
+```bash
+docker-compose exec web python manage.py createsuperuser
+```
+
+The application will be available at `http://localhost:8000`
+
+**Services:**
+- Django API: `http://localhost:8000`
+- PostgreSQL: `localhost:5432`
+- Redis: `localhost:6379`
+
+**Useful Docker commands:**
+```bash
+# Stop services
+docker-compose down
+
+# View logs
+docker-compose logs -f web
+
+# Run migrations
+docker-compose exec web python manage.py migrate
+
+# Run tests
+docker-compose exec web python manage.py test
+
+# Access Django shell
+docker-compose exec web python manage.py shell
+```
+
+### Option 2: Local Development
 
 1. Clone the repository:
 ```bash
