@@ -74,6 +74,32 @@ docker-compose exec web bash
 docker-compose exec web python manage.py shell  # Django shell
 ```
 
+## Pre-Commit Guidelines
+
+**IMPORTANT**: Before committing any code changes, ALWAYS run the following checks inside Docker:
+
+```bash
+# 1. Format code with Black
+docker-compose exec api black .
+
+# 2. Check and fix linting issues with Ruff
+docker-compose exec api ruff check --fix .
+
+# 3. Run all tests to ensure nothing is broken
+docker-compose exec api python manage.py test
+
+# 4. (Optional) Run pre-commit hooks
+docker-compose exec api pre-commit run --all-files
+```
+
+**Commit Checklist**:
+- ✅ Code formatted with Black
+- ✅ No Ruff linting errors
+- ✅ All tests passing
+- ✅ No new warnings or issues
+
+Only commit when all checks pass successfully. This ensures code quality and prevents breaking changes.
+
 ## Project Structure
 
 The project follows a modular app structure:

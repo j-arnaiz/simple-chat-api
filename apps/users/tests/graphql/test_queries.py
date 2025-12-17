@@ -143,15 +143,15 @@ class UserQueryTest(TestCase):
 
     def test_user_query_returns_specific_user(self):
         """Test that user query returns specific user by ID."""
-        query = """
-            query {
-                user(id: %d) {
+        query = f"""
+            query {{
+                user(id: {self.user.id}) {{
                     id
                     username
                     email
-                }
-            }
-        """ % self.user.id
+                }}
+            }}
+        """
 
         result = self.client.execute(query)
 

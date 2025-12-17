@@ -140,17 +140,17 @@ class GraphQLIntegrationTest(TestCase):
 
     def test_graphql_user_query_by_id_integration(self):
         """Test user(id) query through HTTP endpoint."""
-        query = """
-            query {
-                user(id: %d) {
+        query = f"""
+            query {{
+                user(id: {self.user1.id}) {{
                     id
                     username
                     email
                     firstName
                     lastName
-                }
-            }
-        """ % self.user1.id
+                }}
+            }}
+        """
 
         response = self.client.post(
             "/graphql/",

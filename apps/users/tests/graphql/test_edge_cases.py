@@ -107,16 +107,16 @@ class GraphQLEdgeCasesTest(TestCase):
             last_name="",  # Empty string
         )
 
-        query = """
-            query {
-                user(id: %d) {
+        query = f"""
+            query {{
+                user(id: {user.id}) {{
                     id
                     username
                     firstName
                     lastName
-                }
-            }
-        """ % user.id
+                }}
+            }}
+        """
 
         result = self.client_graphql.execute(query)
 
@@ -144,13 +144,13 @@ class GraphQLEdgeCasesTest(TestCase):
         self.assertIsNone(result1.get("errors"))
 
         # Second query
-        query2 = """
-            query {
-                user(id: %d) {
+        query2 = f"""
+            query {{
+                user(id: {user.id}) {{
                     username
-                }
-            }
-        """ % user.id
+                }}
+            }}
+        """
 
         result2 = self.client_graphql.execute(query2)
         self.assertIsNone(result2.get("errors"))

@@ -75,15 +75,15 @@ class GraphQLPermissionsTest(TestCase):
 
     def test_can_query_user_by_id(self):
         """Test querying specific user by ID."""
-        query = """
-            query {
-                user(id: %d) {
+        query = f"""
+            query {{
+                user(id: {self.regular_user.id}) {{
                     id
                     username
                     role
-                }
-            }
-        """ % self.regular_user.id
+                }}
+            }}
+        """
 
         result = self.client_graphql.execute(query)
 
@@ -94,15 +94,15 @@ class GraphQLPermissionsTest(TestCase):
 
     def test_can_query_admin_user_by_id(self):
         """Test querying admin user by ID."""
-        query = """
-            query {
-                user(id: %d) {
+        query = f"""
+            query {{
+                user(id: {self.admin_user.id}) {{
                     id
                     username
                     role
-                }
-            }
-        """ % self.admin_user.id
+                }}
+            }}
+        """
 
         result = self.client_graphql.execute(query)
 

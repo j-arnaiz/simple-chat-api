@@ -30,9 +30,9 @@ class UserTypeSerializationTest(TestCase):
 
     def test_user_type_includes_expected_fields(self):
         """Test that UserType serializes all expected fields."""
-        query = """
-            query {
-                user(id: %d) {
+        query = f"""
+            query {{
+                user(id: {self.user.id}) {{
                     id
                     username
                     email
@@ -41,9 +41,9 @@ class UserTypeSerializationTest(TestCase):
                     role
                     isActive
                     dateJoined
-                }
-            }
-        """ % self.user.id
+                }}
+            }}
+        """
 
         result = self.client.execute(query)
 
@@ -61,15 +61,15 @@ class UserTypeSerializationTest(TestCase):
 
     def test_user_type_does_not_expose_password(self):
         """Test that password field is not exposed in GraphQL."""
-        query = """
-            query {
-                user(id: %d) {
+        query = f"""
+            query {{
+                user(id: {self.user.id}) {{
                     id
                     username
                     password
-                }
-            }
-        """ % self.user.id
+                }}
+            }}
+        """
 
         result = self.client.execute(query)
 
@@ -86,21 +86,21 @@ class UserTypeSerializationTest(TestCase):
             role=User.Role.ADMIN,
         )
 
-        query_user = """
-            query {
-                user(id: %d) {
+        query_user = f"""
+            query {{
+                user(id: {self.user.id}) {{
                     role
-                }
-            }
-        """ % self.user.id
+                }}
+            }}
+        """
 
-        query_admin = """
-            query {
-                user(id: %d) {
+        query_admin = f"""
+            query {{
+                user(id: {admin.id}) {{
                     role
-                }
-            }
-        """ % admin.id
+                }}
+            }}
+        """
 
         result_user = self.client.execute(query_user)
         result_admin = self.client.execute(query_admin)
