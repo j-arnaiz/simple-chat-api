@@ -8,6 +8,7 @@ Simple Chat API is a real-time chat system built with Django, GraphQL, and WebSo
 
 ## Technology Stack
 
+- Docker + docker-compose (required for all development)
 - Django + Django REST Framework (OAuth2 only)
 - GraphQL (Graphene-Django) - primary API
 - Django Channels (WebSockets)
@@ -16,33 +17,61 @@ Simple Chat API is a real-time chat system built with Django, GraphQL, and WebSo
 - uv (package manager)
 - Ruff + Black (code quality)
 
-## Development Commands
+## Docker Setup
+
+**IMPORTANT**: All development must be done using Docker and docker-compose. All commands (tests, migrations, code quality checks, etc.) must be executed inside Docker containers.
 
 ```bash
-# Package management (use uv, not pip)
-uv pip install <package>
-uv pip install -r requirements.txt
-uv pip freeze > requirements.txt
+# Start all services
+docker-compose up
 
-# Database
-python manage.py makemigrations
-python manage.py migrate
+# Start in detached mode
+docker-compose up -d
 
-# Run development server
-python manage.py runserver
+# Stop all services
+docker-compose down
 
-# Testing
-python manage.py test
-python manage.py test apps.chats.tests  # specific app
+# Rebuild containers (after dependency changes)
+docker-compose build
 
-# Code quality
-black .                          # format code
-ruff check .                     # lint
-ruff check --fix .              # auto-fix issues
-pre-commit run --all-files      # run all hooks
+# View logs
+docker-compose logs -f
+docker-compose logs -f web  # specific service
+```
 
-# Create superuser
-python manage.py createsuperuser
+## Development Commands
+
+**All commands below must be executed inside the Docker container using `docker-compose exec`**
+
+```bash
+# Package management (use uv, not pip) - inside container
+docker-compose exec web uv pip install <package>
+docker-compose exec web uv pip install -r requirements.txt
+docker-compose exec web uv pip freeze > requirements.txt
+
+# Database - inside container
+docker-compose exec web python manage.py makemigrations
+docker-compose exec web python manage.py migrate
+
+# Development server runs automatically with docker-compose up
+# Access at http://localhost:8000
+
+# Testing - inside container
+docker-compose exec web python manage.py test
+docker-compose exec web python manage.py test apps.chats.tests  # specific app
+
+# Code quality - inside container
+docker-compose exec web black .                          # format code
+docker-compose exec web ruff check .                     # lint
+docker-compose exec web ruff check --fix .              # auto-fix issues
+docker-compose exec web pre-commit run --all-files      # run all hooks
+
+# Create superuser - inside container
+docker-compose exec web python manage.py createsuperuser
+
+# Open a shell inside the container
+docker-compose exec web bash
+docker-compose exec web python manage.py shell  # Django shell
 ```
 
 ## Project Structure
@@ -55,6 +84,8 @@ The project follows a modular app structure:
 
 ## Key Architecture Decisions
 
+**Development Environment**: All development must be done using Docker and docker-compose. This ensures consistency across environments and simplifies dependency management.
+
 **API Design**: GraphQL is used for all operations (queries, mutations) except OAuth2 token endpoints which remain REST-based.
 
 **Authentication**: OAuth2 tokens are used for both GraphQL and WebSocket connections. Token endpoints use REST.
@@ -63,9 +94,9 @@ The project follows a modular app structure:
 
 **Real-time Updates**: Django Channels handles WebSocket connections for instant message delivery.
 
-**Package Management**: Use `uv` instead of `pip` for faster dependency resolution and installation.
+**Package Management**: Use `uv` instead of `pip` for faster dependency resolution and installation. All package commands must be executed inside the Docker container.
 
-**Code Quality**: Ruff for linting, Black for formatting. Pre-commit hooks enforce quality standards.
+**Code Quality**: Ruff for linting, Black for formatting. Pre-commit hooks enforce quality standards. All quality checks must be run inside the Docker container.
 
 ## Core Models
 
@@ -76,4 +107,4 @@ The project follows a modular app structure:
 
 ## Testing
 
-Django's built-in test framework is used. Tests are located in `tests.py` files within each app. Use `python manage.py test` to run the test suite.
+Django's built-in test framework is used. Tests are located in `tests.py` files within each app. All tests must be run inside the Docker container using `docker-compose exec web python manage.py test`.
