@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     # Third party apps
     "rest_framework",
     "oauth2_provider",
+    "graphene_django",
     # Local apps
     "apps.users",
 ]
@@ -172,4 +173,12 @@ OAUTH2_PROVIDER = {
         "read": "Read scope",
         "write": "Write scope",
     },
+}
+
+# GraphQL Settings
+GRAPHENE = {
+    "SCHEMA": "config.schema.schema",
+    "MIDDLEWARE": [
+        "graphene_django.debug.DjangoDebugMiddleware",
+    ],
 }
